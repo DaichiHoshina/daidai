@@ -7,12 +7,12 @@ daidai が作った Claude Code の plugin をまとめた配布元です。
 ```bash
 /plugin marketplace add DaichiHoshina/daidai
 /plugin install jp-lint@daidai
-/plugin install specramo@daidai
+/plugin install sdd@daidai
 ```
 
 ## 収録している plugin
 
-| 名前 | 内容 | 本体 |
+| 名前 | 内容 | 置き場所 |
 |---|---|---|
-| jp-lint | 日本語の文書を NG 語辞書と文の組み立ての検査で点検して直す | [DaichiHoshina/jp-lint](https://github.com/DaichiHoshina/jp-lint) |
-| specramo | 仕様を PR 単位の Phase に分けて進める spec 駆動開発のコマンド集 | [DaichiHoshina/spec-ramo](https://github.com/DaichiHoshina/spec-ramo) |
+| jp-lint | 日本語の文書を NG 語辞書と文の組み立ての検査で点検して直す | [plugins/jp-lint](plugins/jp-lint) |
+| sdd | 仕様を PR 単位の Phase に分けて進める spec 駆動開発のコマンド集 | [plugins/sdd](plugins/sdd) |
