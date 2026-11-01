@@ -36,7 +36,7 @@ setup() {
 
 @test "取り込み script の差し込み処理が正本の script に効く" {
   orig="$BATS_TEST_TMPDIR/jp-quality-lint.sh"
-  git -C "$BATS_TEST_DIRNAME/.." show origin/main:skills/jp-lint/scripts/jp-quality-lint.sh > "$orig"
+  git -C "$BATS_TEST_DIRNAME/.." show HEAD:./skills/jp-lint/scripts/jp-quality-lint.sh > "$orig"
   # export-from-ai-tools.sh の差し込み部分だけを取り出して、正本相当の script に当てる
   snippet=$(sed -n '/^grep -q .*_apply_user_overlay/,/^grep -q .*_apply_user_overlay/p' \
     "$BATS_TEST_DIRNAME/../scripts/export-from-ai-tools.sh")

@@ -7,12 +7,12 @@
   "plugins": [
     {
       "name": "jp-lint",
-      "source": { "source": "github", "repo": "DaichiHoshina/jp-lint" },
+      "source": "./plugins/jp-lint",
       "description": "書き終えた日本語の文書を、NG 語辞書と文の組み立ての検査で点検して直す"
     },
     {
-      "name": "specramo",
-      "source": { "source": "github", "repo": "DaichiHoshina/spec-ramo" },
+      "name": "sdd",
+      "source": "./plugins/sdd",
       "description": "仕様を PR 単位の Phase に分け、実装者が理解してから一段ずつ進める spec 駆動開発のコマンド集"
     }
   ]

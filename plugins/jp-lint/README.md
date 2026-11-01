@@ -18,8 +18,8 @@
 repo を clone して `scripts/install.sh` を実行し、エージェントに「この文書を点検して」と頼む。
 
 ```bash
-git clone https://github.com/DaichiHoshina/jp-lint.git
-cd jp-lint
+git clone https://github.com/DaichiHoshina/daidai.git
+cd daidai/plugins/jp-lint
 scripts/install.sh                 # $HOME/.agents/skills と $HOME/.claude/skills へ配置する
 scripts/install.sh cursor codex    # エージェントを指定して配置する
 ```
