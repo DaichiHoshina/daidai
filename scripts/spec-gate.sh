@@ -36,9 +36,9 @@ pr_blocks() {
 # branch 名の形と行数の上限は導入先の設定 file から読む。設定 file か key が無ければ、
 # branch 名は形を検査せずに有無だけを判定し、行数の上限は 400 にする
 . "$(dirname "$0")/lib/config.sh"
-config_file=$(specramo_config_path "$(dirname "$SPEC")") || config_file=""
-branch_pattern=$(specramo_config_get "$config_file" branch_pattern 2>/dev/null) || branch_pattern=""
-max_lines=$(specramo_config_get "$config_file" max_lines 2>/dev/null) || max_lines=""
+config_file=$(sdd_config_path "$(dirname "$SPEC")") || config_file=""
+branch_pattern=$(sdd_config_get "$config_file" branch_pattern 2>/dev/null) || branch_pattern=""
+max_lines=$(sdd_config_get "$config_file" max_lines 2>/dev/null) || max_lines=""
 case "$max_lines" in ''|*[!0-9]*) max_lines=400 ;; esac
 if [ -n "$branch_pattern" ]; then
   # <issue> / <PR> / <n> は数字 (枝番の英字 1 文字を許す)、<a|b> は選択、その他の <word> は英数字

@@ -14,20 +14,20 @@ else
 fi
 target="$(cd "$target" && pwd)" || { echo "対象の dir がありません: $1" >&2; exit 2; }
 
-config="$target/.specramo/config.yml"
-specs="$target/.specramo/specs"
+config="$target/.sdd/config.yml"
+specs="$target/.sdd/specs"
 
 if [ -e "$config" ]; then
-  echo "作らなかった (すでにある): .specramo/config.yml"
+  echo "作らなかった (すでにある): .sdd/config.yml"
 else
   mkdir -p "$(dirname "$config")"
   cp "$plugin_root/templates/config.yml" "$config"
-  echo "作った: .specramo/config.yml"
+  echo "作った: .sdd/config.yml"
 fi
 
 if [ -e "$specs" ]; then
-  echo "作らなかった (すでにある): .specramo/specs/"
+  echo "作らなかった (すでにある): .sdd/specs/"
 else
   mkdir -p "$specs"
-  echo "作った: .specramo/specs/"
+  echo "作った: .sdd/specs/"
 fi

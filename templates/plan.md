@@ -1,6 +1,6 @@
 # 作業計画書の雛形
 
-`/sdd:plan` が使う雛形。導入先の `.specramo/templates/plan.md` に同じ名前の file を置くと、この雛形の代わりに使われる。その場合も「Phase の状態」の節と表の列は保つ (`/sdd:implement`・`/sdd:review`・`/sdd:explain`・`/sdd:status` がこの表を読み書きする)。
+`/sdd:plan` が使う雛形。導入先の `.sdd/templates/plan.md` に同じ名前の file を置くと、この雛形の代わりに使われる。その場合も「Phase の状態」の節と表の列は保つ (`/sdd:implement`・`/sdd:review`・`/sdd:explain`・`/sdd:status` がこの表を読み書きする)。
 
 ```markdown
 # 作業計画書: [機能名]

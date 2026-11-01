@@ -23,23 +23,23 @@ Spec Ramo is a Claude Code plugin for spec-driven development. It splits a spec 
 Run these two in a Claude Code session:
 
 ```text
-/plugin marketplace add DaichiHoshina/spec-ramo
-/plugin install sdd@specramo
+/plugin marketplace add DaichiHoshina/daidai
+/plugin install sdd@daidai
 ```
 
-In a session, `/plugin install` opens the plugin's detail panel; choose a scope (user / project) there. From a shell, `claude plugin install sdd@specramo` installs it directly.
+In a session, `/plugin install` opens the plugin's detail panel; choose a scope (user / project) there. From a shell, `claude plugin install sdd@daidai` installs it directly.
 
-Then run `/sdd:init` in the repo where you want to use it. It creates the config file (`.specramo/config.yml`) and the output directory (`.specramo/specs/`). Existing files are left untouched.
+Then run `/sdd:init` in the repo where you want to use it. It creates the config file (`.sdd/config.yml`) and the output directory (`.sdd/specs/`). Existing files are left untouched.
 
 ### Updating
 
 Marketplaces you add yourself do not auto-update by default. To update:
 
-1. `/plugin marketplace update specramo` to refresh the listing
-2. In `/plugin`, open Spec Ramo on the Installed tab and press Update now (from a shell: `claude plugin update sdd@specramo`)
+1. `/plugin marketplace update daidai` to refresh the listing
+2. In `/plugin`, open Spec Ramo on the Installed tab and press Update now (from a shell: `claude plugin update sdd@daidai`)
 3. `/reload-plugins` to apply it to the running session
 
-To enable auto-update, open specramo on the Marketplaces tab in `/plugin` and press Enable auto-update.
+To enable auto-update, open daidai on the Marketplaces tab in `/plugin` and press Enable auto-update.
 
 ## Commands
 
@@ -78,20 +78,20 @@ Spec Ramo targets work large enough to need two or more PRs. For a typo or a sma
 
 ## Configuration
 
-Keys in `.specramo/config.yml`:
+Keys in `.sdd/config.yml`:
 
 | Key | Default | Meaning |
 |---|---|---|
-| `specs_dir` | `.specramo/specs` | Output directory; one sub-directory per feature |
+| `specs_dir` | `.sdd/specs` | Output directory; one sub-directory per feature |
 | `max_lines` | `400` | Upper limit of estimated changed lines per PR (excluding tests) |
 | `test_paths` | none | Path patterns of test files excluded from the line count |
 | `branch_pattern` | none | Shape of Phase branch names (e.g. `phase/<PR>-<slug>`). When empty, only the presence of a name is checked |
 | `rules` | none | Rule files that the "repo rules" review agent reads. When empty, the files in `.claude/rules/` are used |
 | `pr_check_command` | none | Command `/sdd:status` runs to check whether a branch has a PR; `{branch}` is replaced with the branch name. Exit 0 with output = PR exists, exit 0 with no output = no PR, non-zero = could not check. When empty, `gh pr list` is used (e.g. `glab mr list --source-branch {branch} --all --output json | jq '.[].iid'`) |
 
-The environment variable `SPECRAMO_REVIEW_DATA_DIR` points the "past findings" review agent at your team's review-finding data (default `~/.config/specramo/review-data/`). This data is built from your team's past reviews and contains internal information, so keep it out of the repo. If the directory has no files, that agent is not started.
+The environment variable `SDD_REVIEW_DATA_DIR` points the "past findings" review agent at your team's review-finding data (default `~/.config/sdd/review-data/`). This data is built from your team's past reviews and contains internal information, so keep it out of the repo. If the directory has no files, that agent is not started.
 
-To use your own templates, put a file with the same name at `.specramo/templates/<prd|design|plan|phase-design>.md`.
+To use your own templates, put a file with the same name at `.sdd/templates/<prd|design|plan|phase-design>.md`.
 
 ## Development
 

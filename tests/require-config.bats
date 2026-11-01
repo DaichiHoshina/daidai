@@ -3,17 +3,17 @@
 
 setup() {
   SCRIPT="$(cd "$(dirname "$BATS_TEST_FILENAME")/.." && pwd)/scripts/require-config.sh"
-  unset SPECRAMO_CONFIG
+  unset SDD_CONFIG
   REPO="${BATS_TEST_TMPDIR}/repo"
   mkdir -p "$REPO/a"
 }
 
 @test "require-config: 設定 file があれば path を表示して 0" {
-  mkdir -p "$REPO/.specramo"
-  touch "$REPO/.specramo/config.yml"
+  mkdir -p "$REPO/.sdd"
+  touch "$REPO/.sdd/config.yml"
   run bash "$SCRIPT" "$REPO/a"
   [ "$status" -eq 0 ]
-  [ "$output" = "$REPO/.specramo/config.yml" ]
+  [ "$output" = "$REPO/.sdd/config.yml" ]
 }
 
 @test "require-config: 設定 file が無ければ init を案内して 2" {

@@ -57,7 +57,7 @@ repo 全体の lint は大きな repo では timeout を超える。対象にし
 ### migration を含む Phase の使い捨ての DB
 
 1. 共有の DB に適用できないのは、他の branch の schema が入っているときや、他の作業と共有しているときになる
-2. 使い捨ての DB は、手元の DB server に作る別名の database (`specramo_` で始まる名前) か、repo と同じ version の DB を起動した container (`specramo-` で始まる名前) のどちらかにする
+2. 使い捨ての DB は、手元の DB server に作る別名の database (`sdd_` で始まる名前) か、repo と同じ version の DB を起動した container (`sdd-` で始まる名前) のどちらかにする
 3. そこで up と down を実行して確かめ、終わったら database か container を削除する
 4. どちらも用意できない環境では「未実行」と記載する
 

@@ -2,7 +2,7 @@
 # 書式は「key: value」の 1 行か、「key:」に続く「  - value」の list だけを読む
 
 # 成果物 (PRD / Design Doc / 作業計画書 / Phase 詳細設計) を置く dir。機能ごとに sub dir を作る
-specs_dir: .specramo/specs
+specs_dir: .sdd/specs
 
 # 1 PR の想定の変更行数の上限 (テストを除く)。作業計画書検査がこの値で判定する
 max_lines: 400

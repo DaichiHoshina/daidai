@@ -12,7 +12,7 @@ table="$2"
 case "$table" in ''|*[!A-Za-z0-9_]*) usage ;; esac
 
 hits=$(git -C "$repo" grep -n -I -i -E "(from|join)[[:space:]]+\`?${table}\`?([^A-Za-z0-9_]|$)" -- . \
-  ':!*_test.*' ':!*.spec.*' ':!*.test.*' ':!**/migrations/**' ':!migrations/**' ':!.specramo/**' 2>/dev/null || true)
+  ':!*_test.*' ':!*.spec.*' ':!*.test.*' ':!**/migrations/**' ':!migrations/**' ':!.sdd/**' 2>/dev/null || true)
 
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits"

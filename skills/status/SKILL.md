@@ -1,5 +1,5 @@
 ---
-description: 機能ごとに Phase の進み具合 (未着手 / 実装中 / レビュー済み / PR 作成済み) を表示する。レビュー済みの Phase は PR の有無 (既定は GitHub、設定で差し替え可) を確かめて状態を更新する。「specramo の進み具合」「status 見せて」で使う。
+description: 機能ごとに Phase の進み具合 (未着手 / 実装中 / レビュー済み / PR 作成済み) を表示する。レビュー済みの Phase は PR の有無 (既定は GitHub、設定で差し替え可) を確かめて状態を更新する。「sdd の進み具合」「status 見せて」で使う。
 disable-model-invocation: true
 ---
 

@@ -36,7 +36,7 @@ DD に記載するのは、作業計画書を作るのに必要な情報だけ�
 
 ## 規範と雛形 (Read only)
 
-着手前に、同梱した `writing-rules.md` (逆算の 4 原則、利用者が仕様を理解できる文章、構造ゲート) と Step 0 で決めた雛形を Read する。repo に独自の Design Doc の雛形を使いたいときは、導入先の `.specramo/templates/design.md` に置けば Step 0 がそちらを使う。
+着手前に、同梱した `writing-rules.md` (逆算の 4 原則、利用者が仕様を理解できる文章、構造ゲート) と Step 0 で決めた雛形を Read する。repo に独自の Design Doc の雛形を使いたいときは、導入先の `.sdd/templates/design.md` に置けば Step 0 がそちらを使う。
 
 - `specs_dir` の下に既存の DD があれば 2 本読み、節の名前・図の使い方・文の長さを合わせる
 - 雛形に spec 型の節 (Implementation Surface / Required Read・Write Capabilities / 合計の 1 行) が無ければ、その節は作らない

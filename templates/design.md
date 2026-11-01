@@ -1,6 +1,6 @@
 # Design Doc (spec 型) template
 
-`/sdd:design` が使う雛形。実装から逆算し、受け入れ条件 (ID を振らない表) を軸に本文を組む。書き方の規範は `/sdd:design` の skill に同梱した規範の抜粋が正本。導入先の `.specramo/templates/design.md` に同じ名前の file を置くと、この雛形の代わりに使われる。
+`/sdd:design` が使う雛形。実装から逆算し、受け入れ条件 (ID を振らない表) を軸に本文を組む。書き方の規範は `/sdd:design` の skill に同梱した規範の抜粋が正本。導入先の `.sdd/templates/design.md` に同じ名前の file を置くと、この雛形の代わりに使われる。
 
 ## 節構成 (この順で並べる)
 

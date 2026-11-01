@@ -22,23 +22,23 @@ Spec Ramo (スペックラモ) は、仕様を PR 単位の Phase に分け、�
 Claude Code の session で次の 2 つを実行します。
 
 ```text
-/plugin marketplace add DaichiHoshina/spec-ramo
-/plugin install sdd@specramo
+/plugin marketplace add DaichiHoshina/daidai
+/plugin install sdd@daidai
 ```
 
-session 内の `/plugin install` は、plugin の詳細画面を開きます。scope (user / project) を決めてからインストールしてください。shell からは `claude plugin install sdd@specramo` でもインストールできます。
+session 内の `/plugin install` は、plugin の詳細画面を開きます。scope (user / project) を決めてからインストールしてください。shell からは `claude plugin install sdd@daidai` でもインストールできます。
 
-インストールしたら、導入先の repo で `/sdd:init` を実行します。設定 file (`.specramo/config.yml`) と成果物の置き場所 (`.specramo/specs/`) を作ります。既にある file は変更しません。
+インストールしたら、導入先の repo で `/sdd:init` を実行します。設定 file (`.sdd/config.yml`) と成果物の置き場所 (`.sdd/specs/`) を作ります。既にある file は変更しません。
 
 ### plugin の更新
 
 自分で追加した marketplace は、初期状態では自動更新されません。新しい版に更新するときは次の順に実行します。
 
-1. `/plugin marketplace update specramo` で一覧を更新する
-2. `/plugin` の Installed タブで Spec Ramo を開き、Update now を押す (shell からは `claude plugin update sdd@specramo`)
+1. `/plugin marketplace update daidai` で一覧を更新する
+2. `/plugin` の Installed タブで Spec Ramo を開き、Update now を押す (shell からは `claude plugin update sdd@daidai`)
 3. `/reload-plugins` で、実行中の session に反映する
 
-自動更新にしたいときは、`/plugin` の Marketplaces タブで specramo を開き、Enable auto-update を押します。
+自動更新にしたいときは、`/plugin` の Marketplaces タブで daidai を開き、Enable auto-update を押します。
 
 ## コマンド
 
@@ -77,20 +77,20 @@ Spec Ramo は、PR が 2 本以上に分かれる大きさの開発を対象に�
 
 ## 設定
 
-`.specramo/config.yml` の項目です。
+`.sdd/config.yml` の項目です。
 
 | key | 初期値 | 意味 |
 |---|---|---|
-| `specs_dir` | `.specramo/specs` | 成果物を置く dir。機能ごとに sub dir を作る |
+| `specs_dir` | `.sdd/specs` | 成果物を置く dir。機能ごとに sub dir を作る |
 | `max_lines` | `400` | 1 PR の想定の変更行数の上限 (テストを除く) |
 | `test_paths` | なし | 変更行数から除くテスト file の path pattern |
 | `branch_pattern` | なし | Phase の branch 名の形 (例: `phase/<PR>-<slug>`)。未記入なら名前があるかだけを検査する |
 | `rules` | なし | review の「repo の規約」のエージェントが読む規約 file。未記入なら `.claude/rules/` の file を読む |
 | `pr_check_command` | なし | `/sdd:status` が PR の有無を確かめる command。`{branch}` に branch 名が入る。終了コード 0 で何か表示すれば PR あり、何も表示しなければ PR なし、0 以外なら確認できなかった扱い。未記入なら `gh pr list` で確かめる (例: `glab mr list --source-branch {branch} --all --output json | jq '.[].iid'`) |
 
-環境変数 `SPECRAMO_REVIEW_DATA_DIR` で、review の「過去の指摘」のエージェントが読む指摘データの dir を指定できます。初期値は `~/.config/specramo/review-data/` です。指摘データはチームの過去の review から作る file で、社内情報を含むので repo には置きません。dir に file が無ければ、このエージェントは起動しません。
+環境変数 `SDD_REVIEW_DATA_DIR` で、review の「過去の指摘」のエージェントが読む指摘データの dir を指定できます。初期値は `~/.config/sdd/review-data/` です。指摘データはチームの過去の review から作る file で、社内情報を含むので repo には置きません。dir に file が無ければ、このエージェントは起動しません。
 
-雛形を repo 独自のものにしたいときは、`.specramo/templates/<prd|design|plan|phase-design>.md` に同じ名前の file を置きます。
+雛形を repo 独自のものにしたいときは、`.sdd/templates/<prd|design|plan|phase-design>.md` に同じ名前の file を置きます。
 
 ## 開発
 
