@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# /specramo:review が起動するエージェントを決める。1 行 1 エージェントで、tab 区切りの
+# /sdd:review が起動するエージェントを決める。1 行 1 エージェントで、tab 区切りの
 #   <A|B|C|D> <TAB> run  <TAB> <エージェントに渡す値>
 #   <A|B|C|D> <TAB> skip <TAB> <省いた理由>
 # を表示する。渡す値は、B が指摘データの dir、C が規約 file (空白区切り)、D が開発指針の
@@ -19,7 +19,7 @@ start_dir="${1:-.}"
 [ $# -gt 0 ] && shift
 
 config="$(specramo_config_path "$start_dir")" || {
-  echo "設定 file (.specramo/config.yml) がありません。/specramo:init を実行してください"
+  echo "設定 file (.specramo/config.yml) がありません。/sdd:init を実行してください"
   exit 2
 }
 repo_root="$(dirname "$(dirname "$config")")"

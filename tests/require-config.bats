@@ -19,5 +19,5 @@ setup() {
 @test "require-config: 設定 file が無ければ init を案内して 2" {
   run bash "$SCRIPT" "$REPO/a"
   [ "$status" -eq 2 ]
-  [[ "$output" == *"/specramo:init を実行してください"* ]]
+  [[ "$output" == *"/sdd:init を実行してください"* ]]
 }

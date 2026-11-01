@@ -3,7 +3,7 @@ description: Spec Ramo を導入先の repo で使い始めるために、設定
 disable-model-invocation: true
 ---
 
-# /specramo:init
+# /sdd:init
 
 導入先の repo に、Spec Ramo の設定 file と成果物の置き場所を作る。すでにある file は変更しない。
 
@@ -17,7 +17,7 @@ disable-model-invocation: true
 
 2. 表示された行をそのまま利用者に示す。「作った」と「作らなかった (すでにある)」の行がある。
 3. 設定 file を作ったときは、`.specramo/config.yml` の各項目の意味を 1 行ずつ説明する。値は変更しない (利用者が決める)。
-4. 次のコマンドとして `/specramo:prd` を案内する。
+4. 次のコマンドとして `/sdd:prd` を案内する。
 
 ## 注意
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 導入先に Spec Ramo の設定 file と成果物の置き場所を作る。/specramo:init から呼ぶ。
+# 導入先に Spec Ramo の設定 file と成果物の置き場所を作る。/sdd:init から呼ぶ。
 # どちらも、すでにあれば作らない (既存の file は変更しない)。
 # 引数: 対象の dir (省略時は git の repo root、repo でなければ current dir)
 # 出力: 1 行 1 file で「作った: <path>」か「作らなかった (すでにある): <path>」。終了コードは常に 0

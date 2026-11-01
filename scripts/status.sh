@@ -14,7 +14,7 @@ plugin_root="$(dirname "$here")"
 gh_cmd="${SPECRAMO_GH:-gh}"
 
 config="$(specramo_config_path "${1:-.}")" || {
-  echo "設定 file (.specramo/config.yml) がありません。/specramo:init を実行してください"
+  echo "設定 file (.specramo/config.yml) がありません。/sdd:init を実行してください"
   exit 2
 }
 repo_root="$(dirname "$(dirname "$config")")"
@@ -78,7 +78,7 @@ col() {
 }
 
 if [ ! -d "$specs_dir" ] || [ -z "$(find "$specs_dir" -mindepth 1 -maxdepth 1 -type d | head -1)" ]; then
-  echo "成果物がまだありません。/specramo:prd から始めてください"
+  echo "成果物がまだありません。/sdd:prd から始めてください"
   exit 0
 fi
 
@@ -87,7 +87,7 @@ for dir in "$specs_dir"/*/; do
   plan="${dir}plan.md"
   echo
   if [ ! -f "$plan" ]; then
-    echo "$feature: 作業計画書がありません。/specramo:plan を実行してください"
+    echo "$feature: 作業計画書がありません。/sdd:plan を実行してください"
     continue
   fi
   echo "$feature"
@@ -123,7 +123,7 @@ EOF
 
   rows="$(state_rows "$plan")"
   if [ -z "$rows" ]; then
-    echo "  「Phase の状態」の表がありません。/specramo:plan で作業計画書を更新してください"
+    echo "  「Phase の状態」の表がありません。/sdd:plan で作業計画書を更新してください"
     continue
   fi
   echo "| PR | Phase 名 | 状態 | 説明 |"

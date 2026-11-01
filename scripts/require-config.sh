@@ -10,5 +10,5 @@ if path="$(specramo_config_path "${1:-.}")"; then
   printf '%s\n' "$path"
   exit 0
 fi
-echo "設定 file (.specramo/config.yml) がありません。/specramo:init を実行してください"
+echo "設定 file (.specramo/config.yml) がありません。/sdd:init を実行してください"
 exit 2

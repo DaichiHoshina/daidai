@@ -59,7 +59,7 @@ EOF
 
 @test "status: 作業計画書が無い機能では plan の実行を案内する" {
   run bash "$SCRIPT" "$REPO"
-  [[ "$output" == *"no-plan: 作業計画書がありません。/specramo:plan を実行してください"* ]]
+  [[ "$output" == *"no-plan: 作業計画書がありません。/sdd:plan を実行してください"* ]]
 }
 
 @test "status: 作業計画書がある機能では Phase の状態の行を表示する" {
