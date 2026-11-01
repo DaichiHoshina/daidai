@@ -101,7 +101,7 @@ Step 2 の事実を踏まえ、**記載する価値のある項目だけ**を記
 - Validation / エラーハンドリング (既存のどの経路へ合わせるか)
 - 既存処理との関係 (差し替え / 併存 / 呼び出し変更)
 - 重複や不整合を防ぐ仕組みを替えるときの、古い仕組みを前提にした分岐の扱い
-- API の応答を増減させるときの API 仕様の変更
+- API の応答を増減させるときの API 仕様の変更。項目を削除するかどうかは作業計画書の割り当てに従い、この Phase では削除すると決めた項目の API 仕様と生成物の変更方法だけを扱う
 - **不変条件** / **事前条件** / **事後条件**と、それぞれを守る場所 (この Phase で型か公開する操作を新しく作るときだけ)
 - テスト観点 (下の節)
 - 変更対象 file (Step 2 で実在を確かめたもの)。「実装メモ」の下に `### 変更対象 file` の見出しで箇条書きにする (`/specramo:implement` と `/specramo:review` がこの見出しを読む)
@@ -132,7 +132,6 @@ Step 2 の事実を踏まえ、**記載する価値のある項目だけ**を記
    - 冒頭は作業計画書の path と Phase 名。実装方法から始める。Code Investigation の独立節は置かない
    - Phase 名の直後に `意味が変わる table:` の 1 行を置く (Step 2)
    - 本文は判断を言葉で書き、file 名 / 操作名 / 行番号 / test の実行 command は末尾の「実装メモ」表 1 つに集める。表の行は本文の判断の番号と対応させる。変更対象 file の一覧もこの中の `### 変更対象 file` に置く。code comment の文面も書かない
-   - 分量は 100 行程度を目安にする (超えるときの判断は `${CLAUDE_PLUGIN_ROOT}/skills/phase-design/anatomy.md` 「Step 4: 出力の細則」)
 3. 書き出した後に `bash "${CLAUDE_PLUGIN_ROOT}/scripts/phase-gate.sh" <出力した file>` を実行し、FAIL 0 まで修正する。FAIL になる条件は `${CLAUDE_PLUGIN_ROOT}/skills/phase-design/anatomy.md` 「Step 4: 出力の細則」
 4. FAIL 0 を確かめた後に、`/specramo:review <出力した file>` を確認なしで続けて実行し、実装前に必要な情報が揃っているかを確かめる。不足があればこの skill の手順で修正して確認し直す。不足が 0 件になったら Next command を 1 行だけ記載する: `/specramo:explain <作業計画書 path> --phase <n>` (実装前に設計の説明を受け、その Next で `/specramo:implement` へ進む)。出力先は変えない
 5. 実装に進まない
