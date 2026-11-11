@@ -3,7 +3,7 @@
 # 判定 8 項目: (1) Implementation Surface の合計 1 行と表の行数の一致 (API と画面の表が無い変更は対象なしで PASS)
 #             (2) 未確定 marker と「決める時点 = 作業計画書作成前 / DD レビュー」の残存
 #             (3) 「受け入れ条件」 / 振る舞い / 決定事項 の識別子・HTTP status (warn)
-#             (4) 決定事項の表 cell 長 (160 字超は読めない)
+#             (4) 決定事項の表 cell 長 (160 字は読みやすさの目安で、測った値ではないので WARN にとどめる)
 #             (5) 分岐のある受け入れ条件が 2 行以上あるのに振る舞いの図も番号付き手順も無い (warn)
 #             (6) 受け入れ条件と振る舞いに曖昧な形容 (適切に / 堅牢 等) が残っている (warn)
 #             (7) 既存の制約を削除・緩和・変更する Data Schema に、引き継ぎ先と確かめた箇所を記載した担い手の表がある
@@ -108,7 +108,7 @@ if [ "$detail" -eq 0 ]; then report PASS detail-block 'request / response / DDL 
 # mawk の length は byte 数を返し、日本語 1 文字を 3 と数える。UTF-8 の継続 byte を除いてから数える
 # macOS の awk は UTF-8 locale だと byte の範囲指定で消せないため、C locale で byte として扱わせる
 long_cells=$(section 'Design Decisions|決定事項' | grep '^|' | grep -v '^| *-' | LC_ALL=C awk -F'|' '{ for (i = 2; i < NF; i++) { t = $i; gsub(/[\200-\277]/, "", t); if (length(t) > 160) c++ } } END { print c + 0 }')
-if [ "$long_cells" -eq 0 ]; then report PASS decision-cell '160 字超の cell 0'; else report FAIL decision-cell "160 字超の cell ${long_cells} (bullet に戻す)"; fi
+if [ "$long_cells" -eq 0 ]; then report PASS decision-cell '160 字超の cell 0'; else report WARN decision-cell "160 字超の cell ${long_cells} (長ければ bullet に戻す)"; fi
 
 # (5) 振る舞いの図 (warn)
 # 分岐語の検出は語彙に依存して取りこぼしと誤検出の両方が発生するので FAIL にしない。

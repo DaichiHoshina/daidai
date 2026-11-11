@@ -47,7 +47,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/require-config.sh"
 
 説明に必要な範囲だけを読む。diff の周辺 code、呼び出し元と呼び出し先、関連する test を pinpoint で探す。commit message、作業計画書、Design Doc は Why の一次資料として必ず読む。
 
-推測で埋めない。読んで確かめられなかった点は「未確認」と明示して説明に含める。
+推測で埋めない。読んで確認できなかった点は、別の repo の code や設定など使える手段で確かめ、確かめる手段が無い点だけを、その理由を添えて「未確認」と明示して説明に含める。
 
 ## Step 3: 説明を組み立てる
 

@@ -129,6 +129,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/phase-state.sh" set <作業計画書の path
 ## Step 6: 修正 (`--fix` のときだけ)
 
 - 修正してよいのは Phase の対象 file と、その test だけにする。対象外の file を変更する修正は行わず報告する
+- 「既存 test が失敗する見込み」の指摘は、失敗する test を特定してから修正する。同じ形の置換で全 test を一律に書き換えず、失敗するかを実行で確かめた test だけを書き換える。実行できない test は、変えた入力の値を期待値の比較に使っている test だけを書き換え、残りは CI の結果で判定する
 - 修正後は Step 2 から改めて review し、Step 5 で状態を進める
 - 指摘の原因が作業計画書 / Phase 詳細設計 / Design Doc の側にあると判断したものは修正せず、`/sdd:phase-design` か `/sdd:design --update` へ戻す。どちらが正かは利用者が決める
 

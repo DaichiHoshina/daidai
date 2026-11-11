@@ -42,7 +42,7 @@ disable-model-invocation: true
 
 4. Phase 詳細設計 (`/sdd:phase-design` が作成した `plan-phase<n>.md`) を作業計画書と同じ dir で探す。扱いの理由は anatomy 「4. Phase 詳細設計の扱い」。
    - あれば Read して実装形 (公開する型と操作 / 契約 / 問い合わせの方針 / TX / テスト観点 / 変更対象 file) をそのまま採用する。冒頭に「無効」と記載された file は、無いときと同じに扱う
-   - 無いときは `/sdd:phase-design` Step 0 の省略判定をこの Phase に当てる。当たるなら作業計画書の 対象 / 完了条件 から実装形を自分で決めてよい
+   - 無いときは `/sdd:phase-design` Step 0 の省略判定をこの Phase に当てる。当たるなら作業計画書の 対象 / 完了条件 から実装形を自分で決めてよい。決めるときは、名前・置き場所・error の扱い・test の書き方のいずれも、同じ dir と default branch 全体で集計した多数派に合わせ、同じ dir の少数派を前例にしない
    - **当たらないなら実装へ進まず**、`/sdd:phase-design` を実行するよう 1 行報告して止まる
    - Phase 詳細設計と実物が一致しなかったら実装を進めず、不一致を 1 行報告して `/sdd:phase-design` へ戻す
 5. Phase の「実装への指針」に列挙された repo 規範 (rule file) を着手前に Read し、命名 / 型 / 層 / error / test の制約を採用する。
@@ -56,6 +56,7 @@ disable-model-invocation: true
 - 1 Phase を 1 つの会話で実装する。Phase をさらに別の作業へ分割しない。
 - 計画書のタスクが Phase の scope を超えると分かったら、そのタスクは実装せず「別 Phase へ送る」と報告に記載する。作業計画書は `/sdd:plan --update` で更新し、この skill は作業計画書の本文を編集しない。典型は anatomy 「scope を超えるタスク」。
 - 計画書と実物の不一致を見つけたら、1 行で報告して再分析に戻る。Phase 詳細設計で決めた判断を変える必要があるときは、その場で決めずに `/sdd:phase-design` を再実行してから続ける。対象に列挙された file が実物に無いときは不一致でなく新規作成として進め、作成する旨を 1 行で宣言する。何が不一致に当たるかは anatomy 「計画書と実物の不一致」。
+- code に comment を追加・変更する前に、`${CLAUDE_PLUGIN_ROOT}/skills/implement/code-quality.md` の comment の規範と repo のコメント規範 (あれば) を Read し、書いた comment をその規範で点検してから commit する。comment の置き場と書き出しの順序は、Phase 詳細設計に記載が無くてもこの規範で決める
 - 削除やデータの移行や強制 push を含む Phase は、計画書があっても実行前に確認する。ただし手元の隔離環境に適用するだけなら確認は不要で、共有環境を使わない手順を採る。
 - 実装中に既存挙動を変える判断が必要になったら、その場で決めずに `/sdd:design --update` で Design Doc へ記載してから続ける。
 - 設計や repo 規範の解釈に迷ったら、その部分を実装せずに止まる。確かめた内容 / 自分の案 / 迷っている点を 3 行で報告し、利用者が進め方を決めてから続ける。
@@ -69,6 +70,10 @@ disable-model-invocation: true
 - test に必要な環境変数と test の実行条件 (tag 等) は、完了報告の「検証」行に command と一緒に記載する。`/sdd:review` はこの行の command で test を再実行する。
 - migration を含む Phase で、共有の DB に適用できないときは、使い捨ての DB を用意して up と down を実行して確かめ、終わったら削除する。用意できない環境では「未実行」と記載する。DB の選び方は anatomy 「migration を含む Phase の使い捨ての DB」。
 - 変更した symbol 名と file 名で test の dir を grep し、該当した test file を全部実行する。共有 fixture を変えたときは、同じ fixture dir を読む package の test も全部実行する。
+- 入力の読み方を変えたことで既存 test の書き換えが必要に見えるときも、同じ形の置換で全 test を一律に書き換えない。書き換えるのは、変更後の code で失敗する test だけにする
+  - 失敗するかは test を実行して確かめる。手元で実行できない test (DB を使う test など) は、変えた入力の値を期待値の比較や後の処理に使っている test だけを書き換え、残りは書き換えずに CI の結果で判定する
+  - 値を使っているかは、test の file の中で、その値がヘッダや引数の設定以外の行にも出現するかを grep で集計して判定する
+  - 書き換えなかった test の件数と、CI で判定する旨を完了報告に記載する
 - mutation check として、Phase 詳細設計の「テスト観点」が指す条件を 1 つ壊し、該当の test が fail することを確かめてから元に戻す。
   - 復元は、壊す前の file をコピーしておくか逆置換で行う
   - `git checkout -- <file>` は commit 済みの file にだけ使う (理由は anatomy 「mutation check の復元」)
@@ -89,6 +94,7 @@ diff は reviewer が 1 本で採否を決められる状態にする。Phase �
 | e | 値の条件と代入の対応 | Design Doc が決めた各項目の値の条件 (「不要なら空」「未指定なら決まった値」「前の値を引き継ぐ」等) と保存処理の代入が項目ごとに対応している |
 | f | 同種箇所の処理し忘れ | repo 規範を適用して 1 箇所を変えたときは、同じ理由で変更が必要な箇所を全部 grep して抜けが無い。同じ型の同種 field、同じ層で同じ役割の別の処理、同じ判定の別の呼び出し元が当たる |
 | g | test double の引数照合 | 追加・変更した test double の期待で、値が決まる引数を任意一致 (any matcher など) で受けていない。期待する値を組み立てて照合する |
+| h | 言語のバージョンに合う書き方 | 対象 module のバージョンの宣言 (Go なら `go.mod` の go directive) を確かめ、そのバージョンまでの置き換え表 (Go なら `guidelines/languages/go-modern-idioms.md`) で置き換え前に当たる書き方を、diff の追加行に記載していない。表は書く前に読み、review では追加行を表の各行と突き合わせる |
 
 ## Step 4: 完了報告と handoff
 
@@ -98,12 +104,15 @@ diff は reviewer が 1 本で採否を決められる状態にする。Phase �
 Phase <n> / 全 <N> — <Phase 名>: 完了 / 一部完了 (未達: ...)
 現在地: 前 <前の Phase 名 または なし> / 次 <次の Phase 名 または なし>
 満たした条件: <条件の文の引用> / 未達: <同>   (計画書が担当条件を記載しているときだけ)
+対応 test: <条件の文の引用> → <test 名> / test なし (<理由>)   (担当する受け入れ条件ごとに 1 行。/sdd:review が test 名の実在を確かめる)
 検証: <実行した command と結果 1 行>
 mutation check: <壊した条件> → <fail した test 名> / 未実施 (<理由>)   (Phase 詳細設計が対象を決めているときだけ。不変条件 / 事前条件 / 事後条件があれば、残りの条件ごとに対応する test 名か「test なし」を添える)
 review: <最後の review の Critical n 件 / Warning n 件> (iteration n 回、修正済み n 件)
+工程の記録: <必須と書かれた工程と出口の review を 1 行ずつ「実行 (結果) / 省略 (理由)」>
 Next: PR を draft で作成する   (review の指摘が 0 件のとき。その後 /sdd:explain <機能名> --phase <n> へ)
 ```
 
+- 工程の記録には、この skill の手順で「必須」「省かない」と書かれた工程と出口の review を全部並べる。省略してよいのは、実行する前に理由を示し、利用者が同意した工程だけにする。実装の保存が成功しても、完了条件の確認と出口の review は省かない
 - 完了報告の前に `/sdd:review <機能名> --phase <n>` を確認なしで続けて実行する。指摘があれば `--fix` で修正し、修正の後に必ず review をもう一度実行して、Critical と Warning が 0 件になるまで繰り返す。完了報告の review の行には最後の review の件数を記載し、修正しただけで再 review していない指摘を 0 件の側に含めない。作業計画書や設計側の誤りが疑われる指摘は修正せず、review の Next に従って戻す
 - 状態は review の結果で `/sdd:review` が進める。
 - この skill は次の Phase に自動で進まない。利用者が到達点を指定したときの例外は次の項目に従う。
@@ -120,6 +129,8 @@ Next: PR を draft で作成する   (review の指摘が 0 件のとき。そ�
   - Phase の完了条件が担当する受け入れ条件のうち、reviewer に判断してほしいものを 1〜2 個選び、PR 本文の「レビュー観点」に理由を添えて記載する。全件を並べず、表や test 名の形にしない
   - `/sdd:explain` の説明と自分の理解が一致しなかった箇所が 0 件 (不一致はレビュー依頼の前に解消する)
   - PR 説明文を自分の言葉で書き換えた。diff の各変更について「なぜ必要か」を一言で言える
+  - reviewer が問い返しそうな判断 (他の案を採らなかった理由、既存と違う書き方) を列挙し、それぞれへの補足コメントの下書きを作った。想定される問いが 0 件なら 0 件と示す。投稿は利用者が指示してから行う
+  - マージ先が default branch でない PR は、本文の先頭にマージ先にした理由を記載した
 
 ### 失敗時の分岐
 
@@ -135,6 +146,7 @@ Phase 2 / 全 4 — 登録の処理: 完了
 現在地: 前 保存先の追加 / 次 参照の処理
 検証: <完了条件の test command> — PASS (12 件)
 review: 最後の review の Critical 0 件 / Warning 0 件 (iteration 2 回、修正済み 1 件)
+工程の記録: 完了条件の実行 実行 (PASS) / mutation check 実行 (fail を確認) / 出口の review 実行 (0 件)
 Next: PR を draft で作成する
 登録の処理を実装し、完了条件の test がすべて通過したことを確かめました。レビューを依頼する前の checkpoint をご確認ください。
 ```

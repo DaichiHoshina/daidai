@@ -18,12 +18,13 @@ tools: Read, Grep, Glob, Bash
 ## Phase 固有の観点
 
 - **Phase の scope**: 対象外に列挙された file / 振る舞いへの変更は Critical。Phase 詳細設計の変更対象 file に無い変更と、Phase の目的に不要な rename / format / 周辺の書き換えは Warning。
-- **implement の点検表の全項目**: `${CLAUDE_PLUGIN_ROOT}/skills/implement/SKILL.md` の Step 3.5 の表 (参照 0 件の symbol の先出し / magic number の出所 / validation と保存の対称性 / Non-Goals の制約 / 値の条件と代入の対応 / 同種箇所の処理し忘れ / test double の引数照合)。表に項目が増えたら、ここに列挙していない項目も点検する。
+- **implement の点検表の全項目**: `${CLAUDE_PLUGIN_ROOT}/skills/implement/SKILL.md` の Step 3.5 の表を Read し、全項目で点検する。項目の一覧は表が正本なので、ここには列挙しない。
 - **実装への指針**: Phase の「実装への指針」に列挙された rule file だけを読み、Phase 固有の観点として適用する。repo の規約全体はエージェント C が担当する。
 - **受け入れ条件**: 作業計画書の「目的と実装の対応」表 (無ければ各 Phase の完了条件) から、この Phase と前の Phase が担当する受け入れ条件を取り、Design Doc の条件文と diff を突き合わせる。
   - この Phase の担当条件が diff に無い / 一部だけ / 条件文と一致しない場合は Critical
   - 前の Phase の担当条件を、この diff が変えている場合は Critical
   - Design Doc が画面に表示する文字列として「」で示した列名・ボタン名・文言が、実装に完全一致で存在しない場合は Warning。対象は Design Doc の画面や表示を扱う節と、この Phase の担当条件の文中にある「」に限る (節名や用語の「」は含めない)。`git grep -F '<文字列>'` が 0 件のものを列挙する。設計と実装のどちらを修正するかは利用者が決め、エージェントはどちらも修正しない
+  - `/sdd:implement` の完了報告の「対応 test」の行にある test 名を diff と既存の test で grep し、見つからない名前は Critical にする。「test なし」の行は理由があれば指摘にしない
   - Design Doc の path が無い作業計画書では、この観点を省いた旨を 1 行返す
   - Phase の目的にレビューの指摘への link があれば、`gh api` で指摘の原文と返信を取得し、求められた変更を 1 件ずつ列挙する。各件を「diff で対応済み」「作業計画書の対象外に、担当する別の PR の番号付きで記載されている」「どちらでもない」に分け、どちらでもない件は Critical にする (指摘した人に「別 PR で対応」と返したまま、どの PR も担当しない状態になる)
 - **命名**: diff で新設した関数名と変数名を `${CLAUDE_PLUGIN_ROOT}/skills/implement/code-quality.md` の「Naming Criteria」と「Naming Shape」で点検する (Warning)。
@@ -46,7 +47,7 @@ tools: Read, Grep, Glob, Bash
   - `/sdd:review` を実行している側は、`/sdd:implement` Step 3 と同じ使い捨ての環境 (`git worktree add` で作った別の dir など) に test を追加し、「検証」行の command で実行する。終わったら環境を削除し、test は Phase の diff に加えない。Critical に上げるのは、test が実装の誤りで失敗したときだけとし、compile error などの環境の失敗は除く。修正案の実行は Critical の条件に含めない (修正案は `--fix` で確かめる)
   - 確かめた test の本文は指摘に添え、`--fix` で採るときはその本文を使う
   - 手元の test で再現できない入力 (同時実行など、本物の DB や複数の process を必要とするもの) は実行せず、指摘に「未検証」と添えて Warning のまま返す
-  - 返す指摘は Phase ごとに 3 件までとし、誤ったときの影響が大きい順に並べて上位を採る。件数を増やしても、reviewer が採否を決める手間が増えるだけになるため
+  - 返す指摘は、誤ったときの影響が大きい順に並べる。Phase ごとに 3 件前後を目安にし、それを超える重大な指摘は削らずに含める。件数が多いと、reviewer が採否を決める作業量が増えるため
 
 commit を順に読む前提の指摘 (commit の往復 / 並び順) は返さない。reviewer は全 commit をまとめた PR の diff を読む。
 

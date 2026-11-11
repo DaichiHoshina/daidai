@@ -113,12 +113,12 @@ EOF
   printf '%s\n' "$output" | grep -q '^FAIL  open-deadline  作業計画書を止める未決 1 件'
 }
 
-@test "dd-gate: 決定事項の表 cell が 160 字を超えると decision-cell が FAIL" {
+@test "dd-gate: 決定事項の表 cell が 160 字を超えると decision-cell が WARN (FAIL にはしない)" {
   long="$(printf 'あ%.0s' $(seq 1 170))"
   sedi "s/| 保存 | 既存 endpoint を拡張する | 新設する |/| 保存 | ${long} | 新設する |/" "$DD"
   run bash "$SCRIPT" "$DD"
-  [ "$status" -eq 1 ]
-  printf '%s\n' "$output" | grep -q '^FAIL  decision-cell  160 字超の cell 1'
+  [ "$status" -eq 0 ]
+  printf '%s\n' "$output" | grep -q '^WARN  decision-cell  160 字超の cell 1'
 }
 
 @test "dd-gate: 日本語 60 字の cell は byte 数が 160 を超えても decision-cell が PASS" {
