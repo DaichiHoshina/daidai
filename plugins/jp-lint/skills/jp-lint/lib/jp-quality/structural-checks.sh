@@ -14,7 +14,7 @@ source "${BASH_SOURCE[0]%/*}/term-extraction.sh"
 # 読点≥4 の script 検出。warn-only、block しない。出力: warn 文字列 (検出ゼロなら空)。
 # 連続漢字は 2026-10-03 から閾値 6 の block になったので、この関数では扱わない。
 # count は _check_sentence_structure_counts (include_readability=1) が返し、severity は呼び出し側が決める
-# (chat は _cq_struct_block、外向き text は _struct_block、CLI は [block] 行)。
+# (chat は _cq_struct_block、chat 以外の text は _struct_block、CLI は [block] 行)。
 _check_structural_quality() {
   local text="$1"
   [[ -z "$text" ]] && return 0
@@ -32,10 +32,10 @@ _check_structural_quality() {
   return 0
 }
 
-# 文構造の script 検出の count 版。検出数を global 変数にセットする (出力なし)。
+# 文構造の script 検出の count 用の関数。検出数を global 変数にセットする (出力なし)。
 # chat 経路 (_chat_quality_check) が矢印チェーンを block 判定に使うため、
 # warn 文字列でなく数値で返す。warn 文字列が要る経路は wrapper の _check_sentence_structure を使う。
-# 引数: text, polite_check (2 で「〜だ / 〜である」終止を検査 (chat 用)。3 で敬体でない文末を検査 (人に宛てる draft 用、2026-10-02)。外向き doc は default 0),
+# 引数: text, polite_check (2 で「〜だ / 〜である」終止を検査 (chat 用)。3 で敬体でない文末を検査 (人に宛てる draft 用、2026-10-02)。chat 以外の doc は default 0),
 #       include_readability (1 で連続漢字≥6 / 読点≥4 も同じ python 1 fork で検査。
 #       連続漢字は block 判定に使うため、この count を使う経路はすべて 1 を渡す)
 # python3 不在なら全 count 0 で graceful skip
@@ -47,7 +47,7 @@ _check_sentence_structure_counts() {
   _SS_KUTEN=0 _SS_ARROW=0 _SS_POLITE=0 _SS_KANJI_CNT=0 _SS_KANJI_SAMPLE="" _SS_TOUTEN=0
   _SS_FLAT=0 _SS_TIME=0 _SS_TIME_SAMPLE="" _SS_STUFF=0 _SS_STUFF_SAMPLE=""
   _SS_PLAIN_DA=0 _SS_PLAIN_DA_SAMPLE="" _SS_ENDING=0 _SS_ENDING_SAMPLE=""
-  _SS_BOLD=0 _SS_BOLD_RATE=""
+  _SS_BOLD=0 _SS_BOLD_RATE="" _SS_NEG=0 _SS_NEG_SAMPLE=""
   [[ -z "$text" ]] && return 0
   command -v python3 &>/dev/null || return 0
   local clean
@@ -156,7 +156,7 @@ stuff_cnt = len(stuff_hits)
 stuff_sample = " / ".join(stuff_hits[:2]) or "-"
 
 # 文末の断定「〜だ」を集計する。PRINCIPLES.md 「plain JP の文体」 が chat の敬体と
-# 外向き text の常体の両方でこの終止を禁じる。撥音便の過去形 (読んだ / 含んだ) と
+# chat 以外の text の常体の両方でこの終止を禁じる。撥音便の過去形 (読んだ / 含んだ) と
 # 「〜んだ」の口語は対象から外し、名詞述語と形容動詞の終止だけを拾う
 da_re = re.compile(r"(?<!ん)だ$")
 da_hits = []
@@ -207,7 +207,7 @@ for k in keys + [None]:
 end_cnt = len(end_runs)
 end_sample = " / ".join(end_runs[:2]) or "-"
 
-# 太字頻度は外向き文書 (mode 0) だけ検査する。chat は太字を意図して使う
+# 太字頻度は chat 以外の文書 (mode 0) だけ検査する。chat は太字を意図して使う
 bold_hit = 0
 bold_rate = "-"
 if os.environ.get("POLITE_CHECK") == "0":
@@ -220,10 +220,24 @@ if os.environ.get("POLITE_CHECK") == "0":
 
 kuten = text.count("。")
 
-print(f"{kuten}\t{arrow}\t{polite}\t{kanji_cnt}\t{kanji_sample}\t{touten}\t{flat}\t{time_cnt}\t{time_sample}\t{stuff_cnt}\t{stuff_sample}\t{da_cnt}\t{da_sample}\t{end_cnt}\t{end_sample}\t{bold_hit}\t{bold_rate}")
-' 2>/dev/null || printf '0\t0\t0\t0\t-\t0\t0\t0\t-\t0\t-\t0\t-\t0\t-\t0\t-')
-  local _ku _ar _pl _kc _ks _tt _fl _tc _ts _sc _ss _da _das _ec _es _bh _br
-  IFS=$'\t' read -r _ku _ar _pl _kc _ks _tt _fl _tc _ts _sc _ss _da _das _ec _es _bh _br <<< "$result"
+# 1 文に否定が 2 つ以上ある文を検出する (PRINCIPLES.md ### 1 文に否定を重ねず、肯定の形で書く)。
+# 「少ない」「危ない」のような形容詞の語尾は否定ではないので数えない。表と引用の行は対象外
+neg_re = re.compile(r"(?<![少危汚切幼])(ない|なく|無い|無く|ません)|ず(?=[、。]|$)")
+neg_hits = []
+for ln in lines:
+    st = ln.strip()
+    if not st or st.startswith(("#", "|", ">")):
+        continue
+    for part in st.split("。"):
+        if len(neg_re.findall(part)) >= 2:
+            neg_hits.append(part.strip()[:20])
+neg_cnt = len(neg_hits)
+neg_sample = " / ".join(neg_hits[:2]) or "-"
+
+print(f"{kuten}\t{arrow}\t{polite}\t{kanji_cnt}\t{kanji_sample}\t{touten}\t{flat}\t{time_cnt}\t{time_sample}\t{stuff_cnt}\t{stuff_sample}\t{da_cnt}\t{da_sample}\t{end_cnt}\t{end_sample}\t{bold_hit}\t{bold_rate}\t{neg_cnt}\t{neg_sample}")
+' 2>/dev/null || printf '0\t0\t0\t0\t-\t0\t0\t0\t-\t0\t-\t0\t-\t0\t-\t0\t-\t0\t-')
+  local _ku _ar _pl _kc _ks _tt _fl _tc _ts _sc _ss _da _das _ec _es _bh _br _ng _ngs
+  IFS=$'\t' read -r _ku _ar _pl _kc _ks _tt _fl _tc _ts _sc _ss _da _das _ec _es _bh _br _ng _ngs <<< "$result"
   [[ "${_ku:-0}" =~ ^[0-9]+$ ]] && _SS_KUTEN="$_ku"
   [[ "${_ar:-0}" =~ ^[0-9]+$ ]] && _SS_ARROW="$_ar"
   [[ "${_pl:-0}" =~ ^[0-9]+$ ]] && _SS_POLITE="$_pl"
@@ -247,10 +261,13 @@ print(f"{kuten}\t{arrow}\t{polite}\t{kanji_cnt}\t{kanji_sample}\t{touten}\t{flat
   [[ "${_bh:-0}" =~ ^[0-9]+$ ]] && _SS_BOLD="$_bh"
   _SS_BOLD_RATE="${_br:-}"
   [[ "$_SS_BOLD_RATE" == "-" ]] && _SS_BOLD_RATE=""
+  [[ "${_ng:-0}" =~ ^[0-9]+$ ]] && _SS_NEG="$_ng"
+  _SS_NEG_SAMPLE="${_ngs:-}"
+  [[ "$_SS_NEG_SAMPLE" == "-" ]] && _SS_NEG_SAMPLE=""
   return 0
 }
 
-# _SS_* にセット済の count から warn 文字列を組む。counts 版を呼ばない。
+# _SS_* にセット済の count から warn 文字列を組む。counts 用の関数を呼ばない。
 # counts を自前で呼ぶ経路 (CLI) が wrapper と同じ文言を複製せずに済ませるために分けてある。
 # 引数: なし。出力: warn 文字列 (検出ゼロなら空)
 _format_sentence_structure_warn() {
@@ -269,14 +286,15 @@ _format_sentence_structure_warn() {
   (( _SS_STUFF > 0 )) && out="${out}括弧詰め込み: ${_SS_STUFF}件 (${_SS_STUFF_SAMPLE}) → 括弧の名詞羅列を本文の文に開く (PRINCIPLES.md ### 圧縮文を開く); "
   (( _SS_PLAIN_DA > 0 )) && out="${out}文末の断定「〜だ」: ${_SS_PLAIN_DA}件 (${_SS_PLAIN_DA_SAMPLE}) → 動詞終止 (〜する / 〜した / 〜ある) に開く; "
   (( _SS_ENDING > 0 )) && out="${out}同一文末3連続: ${_SS_ENDING}箇所 (${_SS_ENDING_SAMPLE}) → 関連する 2 文を 1 文にまとめるか (例: 「A します。B します。」を「A して、B します。」に)、並列の項目は表にする。下位 bullet に下げても連続は切れない (PRINCIPLES.md ### (3) 文体より意味を優先する); "
+  (( _SS_NEG > 0 )) && out="${out}否定を重ねた文: ${_SS_NEG}文 (${_SS_NEG_SAMPLE}) → 条件と結論を肯定の形にし、対象を「〜だけ」「〜のとき」で限定する (PRINCIPLES.md ### 1 文に否定を重ねず、肯定の形で書く); "
   (( _SS_BOLD > 0 )) && out="${out}太字頻度: ${_SS_BOLD_RATE} で 1000 字あたり 3.0 超 → 強調は結論と数値の 1〜2 か所に限定する; "
   [[ -n "$out" ]] && printf '%s' "${out%; }"
   return 0
 }
 
 # 文構造の script 検出 (矢印チェーン / 文末の文体 ほか)。warn-only。100字超文は集計するだけで出力しない (2026-08-28 廃止)。
-# _check_sentence_structure_counts の wrapper。引数は counts 版と同一。
-# 出力: warn 文字列 (検出ゼロなら空)。外向き経路 (_block_if_ai_jargon) はこちらを使う
+# _check_sentence_structure_counts の wrapper。引数は counts 用の関数と同一。
+# 出力: warn 文字列 (検出ゼロなら空)。chat 以外の経路 (_block_if_ai_jargon) はこちらを使う
 _check_sentence_structure() {
   _check_sentence_structure_counts "$1" "${2:-0}" "${3:-0}"
   _format_sentence_structure_warn

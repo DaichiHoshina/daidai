@@ -35,7 +35,7 @@ _BLOCK_KEYS=(
 )
 _WARN_KEYS=("断定語 (warn-only)" "英語での業界用語 (warn-only)")
 # --strict でのみ見る key。hook は口語 chat への誤爆を避けて自動 block しないが、
-# 規範自体は chat にも適用されるので、後追い検査では明示的に当てられるようにする
+# 規範自体は chat にも適用されるので、後追い検査では明示的に適用できるようにする
 _SKILL_ONLY_KEYS=("荒い比喩語 (skill-only)")
 STRICT=0
 

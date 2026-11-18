@@ -21,7 +21,7 @@ source "${BASH_SOURCE[0]%/*}/../strip-code.sh"
 
 # ====================================
 # AI定型語 / カタカナ造語 block 関数
-# NG-DICTIONARY.md から動的抽出 → 外向き text に grep → hit で exit 2
+# NG-DICTIONARY.md から動的抽出 → chat 以外の text に grep → hit で exit 2
 # ====================================
 _principles_file="${BASH_SOURCE[0]%/*}/../../references/NG-DICTIONARY.md"
 
@@ -31,6 +31,7 @@ _assert_required_keys_done=${_assert_required_keys_done:-0}
 
 # block ログ出力関数
 # 引数: tool_name, hit_term, block|warn
+# 列: 時刻 | 経路 | 語 | session | 判定。判定を行末に配置するのは、行末の列で判定を読む処理 (override の検出、block$ の grep) があるため
 _append_jp_quality_log() {
   local tool_name="$1"
   local hit_term="$2"
@@ -44,7 +45,7 @@ _append_jp_quality_log() {
   _rotate_log_if_needed "$log_file" 3
   local ts
   printf -v ts '%(%Y-%m-%dT%H:%M:%S%z)T' -1
-  printf '%s | %s | %s | %s\n' "$ts" "$tool_name" "$hit_term" "$action" >> "$log_file" 2>/dev/null || true
+  printf '%s | %s | %s | %s | %s\n' "$ts" "$tool_name" "$hit_term" "${SESSION_ID:-${CLAUDE_CODE_SESSION_ID:--}}" "$action" >> "$log_file" 2>/dev/null || true
 }
 
 # code block (``` ... ``` および ` ... `) を除去したテキストを返す
@@ -200,7 +201,7 @@ _append_jp_quality_inject_log() {
     "$ts" "$tool_name" "$bytes" "$status_str" >> "$log_file" 2>/dev/null || true
 }
 
-# 外向き text に対して指定 key の list を grep し、hit 語を stdout に出力
+# chat 以外の text に対して指定 key の list を grep し、hit 語を stdout に出力
 # 返り値: hit あり=1, なし=0
 _check_term_list() {
   local text="$1"
